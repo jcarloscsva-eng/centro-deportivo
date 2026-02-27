@@ -460,19 +460,94 @@
 
 <div class="toast-container" id="toast-container"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 🔧 CONFIGURACIÓN SUPABASE
+// Reemplaza estos dos valores con los tuyos
+// (Settings → API en tu proyecto Supabase)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_KEY = 'TU-ANON-KEY';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Detecta si Supabase está configurado
+const SUPABASE_LISTO = !SUPABASE_URL.includes('TU-PROYECTO');
+
 let cancelTarget = null;
 const state = {
   selectedCourt: 1, selectedSlot: null,
-  padelReservas: JSON.parse(localStorage.getItem('padelReservas')||'[]'),
+  padelReservas: [],
   clasesReservadas: JSON.parse(localStorage.getItem('clasesReservadas')||'[]'),
-  natReservas: JSON.parse(localStorage.getItem('natReservas')||'[]'),
-  currentNatCourse: null
+  natReservas: [],
+  currentNatCourse: null,
+  emailActivo: null
 };
+
+// ── SUPABASE HELPERS ──
+async function db_insertarReservaPadel(r) {
+  if (!SUPABASE_LISTO) { state.padelReservas.push(r); return r; }
+  const {data, error} = await sb.from('reservas_padel').insert([{
+    pista: r.pista, fecha: r.fecha, hora: r.hora + ':00',
+    nombre: r.nombre, email: r.email,
+    es_socio: r.socio, precio: r.precio, estado: 'confirmada'
+  }]).select().single();
+  if (error) { console.error(error); showToast('Error al guardar la reserva','error'); return null; }
+  return data;
+}
+
+async function db_obtenerReservasPadel(email) {
+  if (!SUPABASE_LISTO) return state.padelReservas.filter(r => !email || r.email === email);
+  const q = sb.from('reservas_padel').select('*').order('creada_en', {ascending: false});
+  if (email) q.eq('email', email);
+  const {data, error} = await q;
+  if (error) { console.error(error); return []; }
+  return (data||[]).map(r => ({
+    id: r.id, pista: r.pista,
+    fecha: r.fecha,
+    hora: r.hora?.slice(0,5),
+    nombre: r.nombre, email: r.email,
+    socio: r.es_socio, precio: r.precio,
+    estado: r.estado,
+    creada: r.creada_en
+  }));
+}
+
+async function db_cancelarReservaPadel(id) {
+  if (!SUPABASE_LISTO) {
+    const r = state.padelReservas.find(x => x.id === id);
+    if (r) r.estado = 'cancelada';
+    return true;
+  }
+  const {error} = await sb.from('reservas_padel').update({estado:'cancelada'}).eq('id', id);
+  if (error) { console.error(error); showToast('Error al cancelar','error'); return false; }
+  return true;
+}
+
+async function db_insertarNatacion(datos) {
+  if (!SUPABASE_LISTO) { state.natReservas.push(datos); return datos; }
+  const {data, error} = await sb.from('inscripciones_natacion').insert([{
+    curso_id: datos.cursoId,
+    nombre_nino: datos.nombre,
+    email_responsable: datos.email,
+    precio: 20, estado: 'activa'
+  }]).select().single();
+  if (error) { console.error(error); showToast('Error al inscribir','error'); return null; }
+  return data;
+}
+
+async function db_insertarSocio(datos) {
+  if (!SUPABASE_LISTO) return true;
+  const {error} = await sb.from('socios').insert([datos]);
+  if (error && error.code !== '23505') { // ignora duplicado de email
+    console.error(error); showToast('Error al guardar el alta','error'); return false;
+  }
+  return true;
+}
+
 function save() {
-  localStorage.setItem('padelReservas', JSON.stringify(state.padelReservas));
+  // clases siguen en localStorage (no tienen datos personales)
   localStorage.setItem('clasesReservadas', JSON.stringify(state.clasesReservadas));
-  localStorage.setItem('natReservas', JSON.stringify(state.natReservas));
 }
 function scrollToSection(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}); }
 function openModal(id) { document.getElementById(id)?.classList.add('open'); }
@@ -533,7 +608,7 @@ function updatePadelSummary() {
   document.getElementById('sum-fecha').textContent=(fecha&&state.selectedSlot)?`${fecha} · ${state.selectedSlot}h`:'—';
   document.getElementById('sum-total').textContent=(fecha&&state.selectedSlot)?precio:'—';
 }
-function confirmarReservaPadel() {
+async function confirmarReservaPadel() {
   const fecha=document.getElementById('padel-fecha').value;
   const nombre=document.getElementById('padel-nombre').value.trim();
   const email=document.getElementById('padel-email').value.trim();
@@ -542,8 +617,9 @@ function confirmarReservaPadel() {
   if(!nombre)return showToast('Introduce tu nombre','error');
   if(!email)return showToast('Introduce tu email','error');
   const socio=document.getElementById('socio-select').value;
-  const r={id:'PAD-'+Date.now(),pista:state.selectedCourt,fecha,hora:state.selectedSlot,nombre,email,precio:socio==='si'?20:24,socio:socio==='si',estado:'confirmada',creada:new Date().toISOString()};
-  state.padelReservas.push(r);save();
+  const r={pista:state.selectedCourt,fecha,hora:state.selectedSlot,nombre,email,precio:socio==='si'?20:24,socio:socio==='si',estado:'confirmada',creada:new Date().toISOString()};
+  const saved=await db_insertarReservaPadel(r);
+  if(!saved)return;
   showToast(`Reserva confirmada — Pista ${r.pista} · ${fecha} ${r.hora}h`,'success');
   document.getElementById('padel-nombre').value='';
   document.getElementById('padel-email').value='';
@@ -574,31 +650,39 @@ function abrirModalCancelacion(id) {
   }
   openModal('modal-cancel-padel');
 }
-function ejecutarCancelacion() {
+async function ejecutarCancelacion() {
   if(!cancelTarget)return;
-  const r=state.padelReservas.find(x=>x.id===cancelTarget.id);if(!r)return;
+  const r=cancelTarget;
   const diffH=(new Date(`${r.fecha}T${r.hora}:00`)-new Date())/3600000;
-  r.estado='cancelada';save();closeModal('modal-cancel-padel');renderReservasPadel();
+  const ok=await db_cancelarReservaPadel(r.id);
+  if(!ok)return;
+  closeModal('modal-cancel-padel');
+  await renderReservasPadel();
   if(diffH>=2)showToast(`Reserva cancelada. Reembolso de ${r.precio}€ procesado.`,'success');
   else showToast('Reserva cancelada. Sin reembolso (menos de 2h).','info');
   cancelTarget=null;
 }
-function renderReservasPadel() {
+async function renderReservasPadel() {
   const cont=document.getElementById('reservas-padel-container');
-  if(!state.padelReservas.length){cont.innerHTML='<p style="color:var(--text-light);padding:2rem 0;font-size:0.9rem;">No tienes reservas de pádel todavía.</p>';return;}
-  const sorted=[...state.padelReservas].sort((a,b)=>new Date(b.creada)-new Date(a.creada));
-  cont.innerHTML=`<table class="reservas-table"><thead><tr><th>ID</th><th>Pista</th><th>Fecha</th><th>Hora</th><th>Precio</th><th>Estado</th><th>Reembolso</th><th>Acción</th></tr></thead><tbody>${sorted.map(r=>{
+  cont.innerHTML='<p style="color:var(--text-light);padding:1rem 0;font-size:0.88rem;">Cargando reservas...</p>';
+  const email=document.getElementById('bono-email')?.value.trim()||'';
+  const reservas=await db_obtenerReservasPadel(email||null);
+  state.padelReservas=reservas;
+  if(!reservas.length){cont.innerHTML='<p style="color:var(--text-light);padding:2rem 0;font-size:0.9rem;">No tienes reservas de pádel todavía.</p>';return;}
+  const sorted=[...reservas].sort((a,b)=>new Date(b.creada)-new Date(a.creada));
+  cont.innerHTML=`<table class="reservas-table"><thead><tr><th>ID corto</th><th>Pista</th><th>Fecha</th><th>Hora</th><th>Precio</th><th>Estado</th><th>Reembolso</th><th>Acción</th></tr></thead><tbody>${sorted.map(r=>{
     const diffH=(new Date(`${r.fecha}T${r.hora}:00`)-new Date())/3600000;
     const puedeR=r.estado==='confirmada'&&diffH>=2;
+    const idCorto=String(r.id).slice(-6).toUpperCase();
     return `<tr>
-      <td style="font-size:0.74rem;color:var(--text-light)">${r.id}</td>
+      <td style="font-size:0.74rem;color:var(--text-light);font-family:monospace">${idCorto}</td>
       <td><strong>Pista ${r.pista}</strong></td><td>${r.fecha}</td><td>${r.hora}h</td>
       <td><strong>${r.precio}€</strong></td>
-      <td><span class="badge ${r.estado==='confirmada'?'badge-ok':'badge-cancelled'}">${r.estado}</span></td>
-      <td>${r.estado==='confirmada'?(puedeR?'<span style="color:var(--success);font-size:0.78rem;font-weight:700;">✓ Sí</span>':'<span style="color:var(--danger);font-size:0.78rem;font-weight:700;">✗ No</span>'):'—'}</td>
-      <td>${r.estado==='confirmada'?`<button class="btn-sm btn-sm-danger" onclick="abrirModalCancelacion('${r.id}')">Cancelar</button>`:'—'}</td>
+      <td><span class="badge ${r.estado==="confirmada"?"badge-ok":"badge-cancelled"}">${r.estado}</span></td>
+      <td>${r.estado==="confirmada"?(puedeR?"<span style=\"color:var(--success);font-size:0.78rem;font-weight:700;\">✓ Sí</span>":"<span style=\"color:var(--danger);font-size:0.78rem;font-weight:700;\">✗ No</span>"):"—"}</td>
+      <td>${r.estado==="confirmada"?`<button class="btn-sm btn-sm-danger" onclick="abrirModalCancelacion('${r.id}')">Cancelar</button>`:"—"}</td>
     </tr>`;
-  }).join('')}</tbody></table>`;
+  }).join("")}</tbody></table>`;
 }
 
 const NAT=[
@@ -634,14 +718,15 @@ function abrirNatacion(id) {
   document.getElementById('modal-nat-info').innerHTML=`<h4>📋 Detalles del curso</h4><strong>${c.edad}</strong> · ${c.dias}<br>Horario: <strong>${c.hora}</strong><br>Plazas libres: <strong>${c.max-c.inscritos}</strong> de ${c.max} · <strong style="color:var(--orange)">20€/trimestre</strong>`;
   openModal('modal-natacion');
 }
-function confirmarNatacion() {
+async function confirmarNatacion() {
   const nombre=document.getElementById('nat-nombre').value.trim();
   const email=document.getElementById('nat-email').value.trim();
   if(!nombre||!email)return showToast('Completa todos los campos','error');
   const c=state.currentNatCourse;if(!c)return;
+  const saved=await db_insertarNatacion({cursoId:c.id,nombre,email});
+  if(!saved)return;
   c.inscritos++;
-  state.natReservas.push({cursoId:c.id,nombre,email,estado:'activa',fecha:new Date().toISOString()});
-  save();closeModal('modal-natacion');renderNatacion();
+  closeModal('modal-natacion');renderNatacion();
   showToast(`Inscripción confirmada — ${nombre} · ${c.edad}`,'success');
 }
 
@@ -695,21 +780,33 @@ function cancelarClase(id,e) {
 }
 function rerenderClases(){renderClases(CZ,'zumba-grid');renderClases(CS,'spinning-grid');}
 
-function consultarBono() {
+async function consultarBono() {
   const email=document.getElementById('bono-email').value.trim();
   if(!email)return showToast('Introduce tu email','error');
-  const misP=state.padelReservas.filter(r=>r.email===email&&r.estado==='confirmada');
+  document.getElementById('bono-info').innerHTML='<p style="color:var(--text-light);margin-top:1rem;font-size:0.88rem;">Cargando...</p>';
+  const misP=await db_obtenerReservasPadel(email);
+  const activas=misP.filter(r=>r.estado==='confirmada');
   const misC=state.clasesReservadas.length;
   document.getElementById('bono-info').innerHTML=`<div style="margin-top:1.2rem;">
     <div class="bono-status"><div class="bono-dot"></div><div><div style="font-weight:700;font-size:0.95rem;color:var(--navy);">Bono Activo</div><div style="color:var(--text-light);font-size:0.8rem;">${email}</div></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
-      <div style="background:var(--teal-pale);border:1px solid rgba(10,138,122,0.2);border-radius:10px;padding:1rem;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--teal);">${misP.length}</div><div style="font-size:0.75rem;color:var(--text-light);">Reservas pádel</div></div>
+      <div style="background:var(--teal-pale);border:1px solid rgba(10,138,122,0.2);border-radius:10px;padding:1rem;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--teal);">${activas.length}</div><div style="font-size:0.75rem;color:var(--text-light);">Reservas pádel</div></div>
       <div style="background:var(--orange-pale);border:1px solid rgba(232,93,38,0.2);border-radius:10px;padding:1rem;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--orange);">${misC}</div><div style="font-size:0.75rem;color:var(--text-light);">Clases reservadas</div></div>
     </div>
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;"><div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:0.3rem;">Próximo pago</div><div style="font-size:0.95rem;font-weight:600;color:var(--navy);">30,00€ · 1 abril 2025</div></div>
+    ${!SUPABASE_LISTO?'<div style="margin-top:0.75rem;background:var(--warning-pale);border:1px solid rgba(217,119,6,0.2);border-radius:8px;padding:0.7rem;font-size:0.8rem;color:var(--warning);">⚠️ Supabase no configurado. Los datos son de demostración.</div>':''}
   </div>`;
 }
-function procesarAlta() { showToast('¡Bienvenido/a! Alta en proceso. Recibirás un email de confirmación.','success'); closeModal('modal-socio'); }
+async function procesarAlta() {
+  const nombre=document.querySelector('#modal-socio input[placeholder="Tu nombre"]')?.value.trim()||'';
+  const email=document.querySelector('#modal-socio input[placeholder="tu@email.com"]')?.value.trim()||'';
+  const tel=document.querySelector('#modal-socio input[placeholder="600 000 000"]')?.value.trim()||'';
+  const dni=document.querySelector('#modal-socio input[placeholder="00000000A"]')?.value.trim()||'';
+  if(!nombre||!email)return showToast('Completa nombre y email','error');
+  await db_insertarSocio({nombre,email,telefono:tel,dni,activo:true});
+  showToast('¡Bienvenido/a! Alta en proceso. Recibirás un email de confirmación.','success');
+  closeModal('modal-socio');
+}
 
 function init() {
   const fi=document.getElementById('padel-fecha');
