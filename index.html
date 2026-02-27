@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centro Deportivo Aqua Sport</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --bg2: #eef0f8;
+    --white: #ffffff;
+    --navy: #1a2d5a;
+    --navy-mid: #223672;
+    --orange: #e85d26;
+    --orange-light: #f0722d;
+    --orange-pale: #fff1eb;
+    --teal: #0a8a7a;
+    --teal-pale: #e5f7f5;
+    --teal-light: #0fb59f;
+    --text: #1c2b4a;
+    --text-mid: #4a5568;
+    --text-light: #8896b3;
+    --border: #dde3f0;
+    --border-mid: #c8d0e7;
+    --card: #ffffff;
+    --success: #16a34a;
+    --success-pale: #dcfce7;
+    --danger: #dc2626;
+    --danger-pale: #fee2e2;
+    --warning: #d97706;
+    --warning-pale: #fef3c7;
+    --shadow: 0 2px 12px rgba(26,45,90,0.08);
+    --shadow-md: 0 4px 24px rgba(26,45,90,0.12);
+    --shadow-lg: 0 8px 40px rgba(26,45,90,0.16);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 2.5rem;
+    background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 8px rgba(26,45,90,0.06);
+  }
+  .nav-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 2px; color: var(--navy); cursor: pointer; }
+  .nav-logo span { color: var(--orange); }
+  .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--text-mid); font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--orange); }
+  .nav-cta { background: var(--navy); color: white; border: none; padding: 0.55rem 1.4rem; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .nav-cta:hover { background: var(--navy-mid); }
+
+  #hero {
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden; padding: 8rem 2.5rem 4rem;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #2d4a8a 100%);
+  }
+  .hero-orb1 { position: absolute; top: -100px; right: -100px; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(14,181,159,0.18) 0%, transparent 65%); pointer-events: none; }
+  .hero-orb2 { position: absolute; bottom: -80px; left: -80px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(232,93,38,0.12) 0%, transparent 65%); pointer-events: none; }
+  .hero-content { position: relative; z-index: 1; max-width: 680px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; margin-bottom: 1.5rem; }
+  .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 7vw, 5.5rem); line-height: 1.02; letter-spacing: 2px; color: white; margin-bottom: 1.2rem; }
+  .hero-title span { color: #ffb347; }
+  .hero-subtitle { font-size: 1.05rem; color: rgba(255,255,255,0.75); line-height: 1.75; max-width: 500px; margin-bottom: 2.5rem; font-weight: 300; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-hero-primary { background: var(--orange); color: white; border: none; padding: 0.9rem 2rem; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif; box-shadow: 0 4px 16px rgba(232,93,38,0.4); }
+  .btn-hero-primary:hover { background: var(--orange-light); transform: translateY(-2px); }
+  .btn-hero-secondary { background: rgba(255,255,255,0.12); color: white; border: 1.5px solid rgba(255,255,255,0.3); padding: 0.9rem 2rem; border-radius: 10px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; font-family: 'DM Sans', sans-serif; }
+  .btn-hero-secondary:hover { background: rgba(255,255,255,0.2); }
+  .hero-stats { position: relative; z-index: 1; display: flex; gap: 3rem; margin-top: 4rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.15); flex-wrap: wrap; }
+  .hero-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem; color: #ffb347; letter-spacing: 1px; line-height: 1; }
+  .hero-stat-label { font-size: 0.78rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.2rem; }
+
+  .section-wrap { padding: 5rem 2.5rem; max-width: 1200px; margin: 0 auto; }
+  .section-alt { background: var(--bg2); }
+  .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--orange); margin-bottom: 0.5rem; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 4vw, 2.8rem); letter-spacing: 1.5px; color: var(--navy); margin-bottom: 0.75rem; }
+  .section-desc { color: var(--text-mid); font-size: 0.97rem; line-height: 1.75; max-width: 580px; margin-bottom: 2.5rem; font-weight: 300; }
+
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem; box-shadow: var(--shadow); transition: all 0.25s; }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.35rem; letter-spacing: 1px; color: var(--navy); margin-bottom: 0.4rem; }
+  .card-text { color: var(--text-mid); font-size: 0.88rem; line-height: 1.7; }
+  .price-chip { display: inline-block; background: var(--orange-pale); color: var(--orange); border: 1px solid rgba(232,93,38,0.2); padding: 0.28rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-top: 0.9rem; }
+  .price-chip.teal { background: var(--teal-pale); color: var(--teal); border-color: rgba(10,138,122,0.2); }
+
+  .membership-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+  .membership-card { background: var(--navy); border-radius: 20px; padding: 2.5rem; position: relative; overflow: hidden; color: white; }
+  .membership-card::after { content: ''; position: absolute; top: -60%; right: -20%; width: 350px; height: 350px; border-radius: 50%; background: radial-gradient(circle, rgba(14,181,159,0.12) 0%, transparent 60%); }
+  .membership-price-big { font-family: 'Bebas Neue', sans-serif; font-size: 5.5rem; line-height: 1; color: #ffb347; letter-spacing: 2px; position: relative; z-index: 1; }
+  .membership-price-big sup { font-size: 2rem; vertical-align: super; }
+  .membership-price-big span { font-size: 1.4rem; color: rgba(255,255,255,0.45); }
+  .membership-includes { list-style: none; margin-top: 1.5rem; position: relative; z-index: 1; }
+  .membership-includes li { padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); font-size: 0.9rem; display: flex; align-items: center; gap: 0.7rem; }
+  .membership-includes .check { color: #4ade80; font-weight: 700; }
+  .btn-white { background: white; color: var(--navy); border: none; padding: 0.85rem 2rem; width: 100%; border-radius: 10px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; margin-top: 1.5rem; position: relative; z-index: 1; }
+  .btn-white:hover { background: #f0f0f0; }
+
+  .btn-primary { background: var(--navy); color: white; border: none; padding: 0.8rem 1.8rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .btn-primary:hover { background: var(--navy-mid); }
+  .btn-primary.orange { background: var(--orange); }
+  .btn-primary.orange:hover { background: var(--orange-light); }
+  .btn-secondary { background: transparent; color: var(--navy); border: 1.5px solid var(--border-mid); padding: 0.8rem 1.8rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .btn-secondary:hover { border-color: var(--navy); background: var(--bg2); }
+
+  .tabs { display: flex; gap: 0.4rem; margin-bottom: 2rem; flex-wrap: wrap; }
+  .tab { padding: 0.5rem 1.2rem; border-radius: 8px; background: var(--white); border: 1.5px solid var(--border); color: var(--text-mid); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+  .tab.active { background: var(--navy); border-color: var(--navy); color: white; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .padel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .form-group { margin-bottom: 1.1rem; }
+  .form-label { display: block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.8px; color: var(--text-mid); margin-bottom: 0.45rem; text-transform: uppercase; }
+  .form-input, .form-select { width: 100%; padding: 0.7rem 1rem; background: var(--white); border: 1.5px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.93rem; transition: border-color 0.2s; outline: none; }
+  .form-input:focus, .form-select:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(26,45,90,0.08); }
+  .form-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: calc(100% - 12px) center; background-color: white; }
+
+  .slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+  .slot { padding: 0.55rem 0; border-radius: 8px; text-align: center; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.18s; border: 1.5px solid var(--border); background: var(--white); color: var(--text-mid); }
+  .slot:hover:not(.occupied) { border-color: var(--orange); color: var(--orange); background: var(--orange-pale); }
+  .slot.selected { background: var(--navy); border-color: var(--navy); color: white; }
+  .slot.occupied { background: #f8f8f8; border-color: var(--border); color: #ccc; cursor: not-allowed; text-decoration: line-through; }
+
+  .courts-row { display: flex; gap: 0.6rem; margin-top: 0.4rem; flex-wrap: wrap; }
+  .court-btn { padding: 0.48rem 1rem; border-radius: 8px; background: var(--white); border: 1.5px solid var(--border); color: var(--text-mid); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.18s; font-family: 'DM Sans', sans-serif; }
+  .court-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .court-btn.selected { background: var(--teal-pale); border-color: var(--teal); color: var(--teal); }
+
+  .booking-summary { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; margin-top: 1.2rem; }
+  .summary-row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.88rem; color: var(--text-mid); }
+  .summary-row.total { font-weight: 700; font-size: 1rem; color: var(--navy); border-top: 1px solid var(--border); margin-top: 0.5rem; padding-top: 0.75rem; }
+
+  .cancel-policy { background: var(--warning-pale); border: 1px solid rgba(217,119,6,0.25); border-radius: 10px; padding: 0.9rem 1.1rem; font-size: 0.83rem; color: var(--warning); margin-top: 0.8rem; line-height: 1.6; }
+
+  .table-wrap { overflow-x: auto; }
+  .reservas-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+  .reservas-table th { text-align: left; padding: 0.7rem 1rem; background: var(--bg2); font-size: 0.74rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-light); border-bottom: 1px solid var(--border); }
+  .reservas-table td { padding: 0.85rem 1rem; font-size: 0.87rem; color: var(--text-mid); border-bottom: 1px solid var(--border); }
+  .reservas-table tr:last-child td { border-bottom: none; }
+  .reservas-table tbody tr:hover td { background: var(--bg2); }
+  .badge { display: inline-block; padding: 0.2rem 0.65rem; border-radius: 20px; font-size: 0.74rem; font-weight: 700; }
+  .badge-ok { background: var(--success-pale); color: var(--success); }
+  .badge-cancelled { background: var(--danger-pale); color: var(--danger); }
+
+  .btn-sm { padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.77rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1.5px solid; transition: all 0.18s; }
+  .btn-sm-danger { border-color: rgba(220,38,38,0.35); color: var(--danger); background: transparent; }
+  .btn-sm-danger:hover { background: var(--danger-pale); }
+
+  .classes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.1rem; }
+  .class-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); transition: all 0.2s; }
+  .class-card:hover { box-shadow: var(--shadow-md); }
+  .class-info { flex: 1; }
+  .class-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 0.8px; color: var(--navy); }
+  .class-time { color: var(--teal); font-size: 0.83rem; font-weight: 600; margin: 0.15rem 0; }
+  .class-day { color: var(--text-light); font-size: 0.8rem; }
+  .class-spots { font-size: 0.78rem; color: var(--text-light); margin-top: 0.4rem; }
+  .spots-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 0.35rem; overflow: hidden; }
+  .spots-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+  .btn-class { padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; border: 1.5px solid; transition: all 0.18s; white-space: nowrap; margin-left: 0.8rem; }
+  .btn-class-reserve { background: var(--teal-pale); border-color: rgba(10,138,122,0.25); color: var(--teal); }
+  .btn-class-reserve:hover { background: rgba(10,138,122,0.15); }
+  .btn-class-full { background: var(--bg2); border-color: var(--border); color: var(--text-light); cursor: not-allowed; }
+  .btn-class-cancel { background: var(--danger-pale); border-color: rgba(220,38,38,0.25); color: var(--danger); }
+
+  .natacion-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.1rem; }
+  .natacion-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; box-shadow: var(--shadow); transition: all 0.2s; }
+  .natacion-card:hover { box-shadow: var(--shadow-md); }
+  .age-badge { display: inline-block; background: var(--orange); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; margin-bottom: 0.9rem; }
+
+  .bono-layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: 2rem; align-items: start; }
+  .bono-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; box-shadow: var(--shadow); }
+  .bono-status { display: flex; align-items: center; gap: 0.9rem; padding: 0.9rem 1rem; border-radius: 10px; background: var(--success-pale); border: 1px solid rgba(22,163,74,0.2); margin-bottom: 1.5rem; }
+  .bono-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--success); box-shadow: 0 0 0 3px rgba(22,163,74,0.2); flex-shrink: 0; }
+  .bono-actions-list { list-style: none; }
+  .bono-action-item { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; color: var(--text-mid); }
+  .bono-action-item:last-child { border-bottom: none; }
+
+  .info-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem; font-size: 0.85rem; color: var(--text-mid); line-height: 1.7; margin-bottom: 1rem; }
+  .info-box h4 { color: var(--navy); font-size: 0.9rem; margin-bottom: 0.4rem; }
+
+  .stripe-info { background: linear-gradient(135deg, #f0f4ff, #e8f0fe); border: 1px solid #c7d5f7; border-radius: 14px; padding: 1.5rem; margin-top: 1.2rem; }
+  .stripe-info h3 { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 1px; color: var(--navy); margin-bottom: 0.75rem; }
+  .stripe-row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.85rem; color: var(--text-mid); border-bottom: 1px solid #d0daf5; }
+  .stripe-row:last-child { border-bottom: none; }
+  .stripe-note { font-size: 0.78rem; color: var(--text-light); margin-top: 0.75rem; font-style: italic; }
+
+  .modal-overlay { position: fixed; inset: 0; z-index: 2000; background: rgba(10,20,50,0.45); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--white); border: 1px solid var(--border); border-radius: 20px; padding: 2.2rem; max-width: 500px; width: 100%; box-shadow: var(--shadow-lg); transform: translateY(16px); transition: transform 0.25s; max-height: 90vh; overflow-y: auto; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.4rem; }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: 1px; color: var(--navy); }
+  .modal-close { background: var(--bg2); border: 1px solid var(--border); color: var(--text-mid); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+  .modal-close:hover { background: var(--danger-pale); color: var(--danger); }
+
+  .refund-box { border-radius: 10px; padding: 1rem; font-size: 0.88rem; margin-bottom: 1.2rem; display: flex; align-items: flex-start; gap: 0.7rem; line-height: 1.6; }
+  .refund-box.ok { background: var(--success-pale); color: var(--success); }
+  .refund-box.no { background: var(--danger-pale); color: var(--danger); }
+  .cancel-detail-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 1.2rem; font-size: 0.88rem; color: var(--text-mid); }
+
+  .toast-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 3000; display: flex; flex-direction: column; gap: 0.6rem; }
+  .toast { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 0.9rem 1.4rem; font-size: 0.87rem; min-width: 270px; display: flex; align-items: center; gap: 0.75rem; transform: translateX(120%); transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1); box-shadow: var(--shadow-lg); color: var(--text); }
+  .toast.show { transform: translateX(0); }
+  .toast.success { border-left: 3px solid var(--success); }
+  .toast.error { border-left: 3px solid var(--danger); }
+  .toast.info { border-left: 3px solid var(--orange); }
+
+  footer { background: var(--navy); padding: 3rem 2.5rem; text-align: center; color: rgba(255,255,255,0.7); }
+  .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; color: white; }
+  .footer-logo span { color: #ffb347; }
+  .footer-tagline { font-size: 0.84rem; margin-top: 0.4rem; }
+  .footer-links { display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+  .footer-links a { color: rgba(255,255,255,0.5); font-size: 0.82rem; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: #ffb347; }
+  .footer-copy { color: rgba(255,255,255,0.3); font-size: 0.76rem; margin-top: 1.8rem; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0.9rem 1.2rem; }
+    .nav-links { display: none; }
+    .section-wrap { padding: 3rem 1.2rem; }
+    .padel-grid, .membership-layout, .bono-layout { grid-template-columns: 1fr; }
+    .slots-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+  .hero-badge { animation: fadeUp 0.5s ease both; }
+  .hero-title { animation: fadeUp 0.5s 0.1s ease both; }
+  .hero-subtitle { animation: fadeUp 0.5s 0.2s ease both; }
+  .hero-actions { animation: fadeUp 0.5s 0.3s ease both; }
+  .hero-stats { animation: fadeUp 0.5s 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="scrollToSection('hero')">AQUA<span>SPORT</span></div>
+  <ul class="nav-links">
+    <li><a onclick="scrollToSection('membresia')">Membresía</a></li>
+    <li><a onclick="scrollToSection('padel')">Pádel</a></li>
+    <li><a onclick="scrollToSection('natacion')">Natación</a></li>
+    <li><a onclick="scrollToSection('clases')">Clases</a></li>
+    <li><a onclick="scrollToSection('bono')">Mi Bono</a></li>
+  </ul>
+  <button class="nav-cta" onclick="openModal('modal-socio')">Hazte Socio</button>
+</nav>
+
+<div id="hero">
+  <div class="hero-orb1"></div><div class="hero-orb2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🏊 Centro Deportivo · Desde 2010</div>
+    <h1 class="hero-title">TU CENTRO<br>DEPORTIVO<br><span>COMPLETO</span></h1>
+    <p class="hero-subtitle">Piscina, pádel, Zumba y Spinning en un mismo lugar. Únete como socio y disfruta de acceso ilimitado al gimnasio, piscina y clases grupales desde 30€/mes.</p>
+    <div class="hero-actions">
+      <button class="btn-hero-primary" onclick="openModal('modal-socio')">Hazte Socio · 30€/mes</button>
+      <button class="btn-hero-secondary" onclick="scrollToSection('padel')">Reservar Pista</button>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div><div class="hero-stat-num">4</div><div class="hero-stat-label">Pistas de Pádel</div></div>
+    <div><div class="hero-stat-num">8</div><div class="hero-stat-label">Cursos Natación</div></div>
+    <div><div class="hero-stat-num">12</div><div class="hero-stat-label">Clases Semanales</div></div>
+    <div><div class="hero-stat-num">+500</div><div class="hero-stat-label">Socios Activos</div></div>
+  </div>
+</div>
+
+<!-- SERVICIOS -->
+<div><div class="section-wrap">
+  <div class="section-label">Nuestras Instalaciones</div>
+  <h2 class="section-title">TODO LO QUE NECESITAS</h2>
+  <p class="section-desc">Un centro deportivo completo donde socios y no socios pueden disfrutar de instalaciones de primer nivel.</p>
+  <div class="cards-grid">
+    <div class="card"><div class="card-icon">🏓</div><div class="card-title">Pistas de Pádel</div><div class="card-text">4 pistas cubiertas con iluminación LED. Reserva online, elige tu franja y paga de forma segura. Partidos de 90 min para 4 jugadores.</div><span class="price-chip">20€ socios · 24€ no socios</span></div>
+    <div class="card"><div class="card-icon">🏊</div><div class="card-title">Piscina</div><div class="card-text">Piscina de 25 metros para nado libre incluida en el bono de socio. Compartida con cursos infantiles en horarios establecidos.</div><span class="price-chip teal">Incluida en bono</span></div>
+    <div class="card"><div class="card-icon">💪</div><div class="card-title">Gimnasio</div><div class="card-text">Sala de musculación con maquinaria de última generación. Acceso ilimitado para socios durante todo el horario de apertura.</div><span class="price-chip teal">Incluido en bono</span></div>
+    <div class="card"><div class="card-icon">🎶</div><div class="card-title">Zumba & Spinning</div><div class="card-text">Clases grupales incluidas en el bono. Reserva tu plaza y cancela hasta 2 horas antes sin penalización.</div><span class="price-chip teal">Incluido en bono</span></div>
+  </div>
+</div></div>
+
+<!-- MEMBRESÍA -->
+<div id="membresia" class="section-alt"><div class="section-wrap">
+  <div class="section-label">Membresía</div>
+  <h2 class="section-title">HAZTE SOCIO</h2>
+  <div class="membership-layout">
+    <div class="membership-card">
+      <div style="color:rgba(255,255,255,0.5);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem;position:relative;z-index:1;">Sin permanencia · Cancela cuando quieras</div>
+      <div class="membership-price-big"><sup>€</sup>30<span>/mes</span></div>
+      <ul class="membership-includes">
+        <li><span class="check">✓</span> Acceso ilimitado al gimnasio</li>
+        <li><span class="check">✓</span> Piscina de nado libre incluida</li>
+        <li><span class="check">✓</span> Clases de Zumba ilimitadas</li>
+        <li><span class="check">✓</span> Clases de Spinning ilimitadas</li>
+        <li><span class="check">✓</span> Pista pádel con descuento (24€ → 20€)</li>
+        <li><span class="check">✓</span> Reserva online prioritaria</li>
+        <li><span class="check">✓</span> Taquilla individual asignada</li>
+      </ul>
+      <button class="btn-white" onclick="openModal('modal-socio')">Quiero ser socio →</button>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:1.1rem;"><div class="card-icon">🎁</div><div class="card-title">¿No eres socio?</div><div class="card-text">Puedes reservar pistas de pádel como visitante (24€/90 min) e inscribir a tus hijos en cursos trimestrales de natación.</div></div>
+      <div class="card"><div class="card-icon">📱</div><div class="card-title">Gestión Online</div><div class="card-text">Consulta tu bono, historial de reservas y próximas clases directamente desde aquí. Sin desplazamientos.</div><button class="btn-secondary" style="margin-top:1rem;font-size:0.85rem;" onclick="scrollToSection('bono')">Acceder a Mi Bono</button></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- PÁDEL -->
+<div id="padel"><div class="section-wrap">
+  <div class="section-label">Reservas Online</div>
+  <h2 class="section-title">PISTAS DE PÁDEL</h2>
+  <p class="section-desc">4 pistas disponibles. Partidos de 90 minutos para 4 jugadores. Reserva, paga y cancela online.</p>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('padel-tabs','nueva-reserva',this)">➕ Nueva Reserva</button>
+    <button class="tab" onclick="showTab('padel-tabs','mis-reservas',this)">📋 Mis Reservas</button>
+  </div>
+  <div id="padel-tabs">
+    <div id="nueva-reserva" class="tab-content active">
+      <div class="padel-grid">
+        <div>
+          <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-input" id="padel-fecha" onchange="loadSlots()"></div>
+          <div class="form-group"><label class="form-label">Pista</label><div class="courts-row" id="court-selector"><button class="court-btn selected" onclick="selectCourt(this,1)">Pista 1</button><button class="court-btn" onclick="selectCourt(this,2)">Pista 2</button><button class="court-btn" onclick="selectCourt(this,3)">Pista 3</button><button class="court-btn" onclick="selectCourt(this,4)">Pista 4</button></div></div>
+          <div class="form-group"><label class="form-label">Horario disponible</label><div class="slots-grid" id="slots-grid"></div></div>
+          <div class="form-group"><label class="form-label">¿Eres socio?</label><select class="form-select" id="socio-select" onchange="updatePadelSummary()"><option value="si">Sí, soy socio (20€)</option><option value="no">No, soy visitante (24€)</option></select></div>
+        </div>
+        <div>
+          <div class="form-group"><label class="form-label">Nombre del responsable</label><input type="text" class="form-input" id="padel-nombre" placeholder="Tu nombre completo"></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="padel-email" placeholder="tu@email.com"></div>
+          <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" id="padel-tel" placeholder="600 000 000"></div>
+          <div class="booking-summary">
+            <div class="summary-row"><span>Pista</span><span id="sum-pista">—</span></div>
+            <div class="summary-row"><span>Fecha y hora</span><span id="sum-fecha">—</span></div>
+            <div class="summary-row"><span>Duración</span><span>90 minutos</span></div>
+            <div class="summary-row total"><span>TOTAL</span><span id="sum-total">—</span></div>
+          </div>
+          <div class="cancel-policy">⚠️ <strong>Política de cancelación:</strong> Puedes cancelar con <strong>reembolso completo</strong> hasta <strong>2 horas antes</strong> del partido. Pasado ese plazo, no se devuelve el importe.</div>
+          <button class="btn-primary orange" style="width:100%;margin-top:1rem;" onclick="confirmarReservaPadel()">Confirmar y Pagar 💳</button>
+        </div>
+      </div>
+    </div>
+    <div id="mis-reservas" class="tab-content">
+      <div class="info-box"><h4>📋 Política de cancelación</h4>Cancela hasta <strong>2 horas antes</strong> con devolución completa. La columna «Reembolso» muestra si todavía puedes cancelar con devolución.</div>
+      <div class="table-wrap" id="reservas-padel-container"></div>
+    </div>
+  </div>
+</div></div>
+
+<!-- NATACIÓN -->
+<div id="natacion" class="section-alt"><div class="section-wrap">
+  <div class="section-label">Cursos Trimestrales</div>
+  <h2 class="section-title">NATACIÓN INFANTIL</h2>
+  <p class="section-desc">Cursos para niños de 2 a 9 años. Máximo 6 alumnos por clase para atención personalizada. Inscripción trimestral · 20€.</p>
+  <div class="natacion-grid" id="natacion-grid"></div>
+</div></div>
+
+<!-- CLASES -->
+<div id="clases"><div class="section-wrap">
+  <div class="section-label">Incluido en el Bono</div>
+  <h2 class="section-title">ZUMBA & SPINNING</h2>
+  <p class="section-desc">Incluidas en tu bono de socio. Reserva plaza y cancela hasta 2 horas antes sin penalización.</p>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('clases-tabs','zumba-tab',this)">💃 Zumba</button>
+    <button class="tab" onclick="showTab('clases-tabs','spinning-tab',this)">🚴 Spinning</button>
+  </div>
+  <div id="clases-tabs">
+    <div id="zumba-tab" class="tab-content active"><div class="classes-grid" id="zumba-grid"></div></div>
+    <div id="spinning-tab" class="tab-content"><div class="classes-grid" id="spinning-grid"></div></div>
+  </div>
+</div></div>
+
+<!-- BONO -->
+<div id="bono" class="section-alt"><div class="section-wrap">
+  <div class="section-label">Gestión Online</div>
+  <h2 class="section-title">MI BONO</h2>
+  <div class="bono-layout">
+    <div class="bono-card">
+      <div class="form-group"><label class="form-label">Email del socio</label><input type="email" class="form-input" id="bono-email" placeholder="tu@email.com" value="socio@ejemplo.com"></div>
+      <button class="btn-primary" style="width:100%;" onclick="consultarBono()">Consultar mi bono</button>
+      <div id="bono-info"></div>
+    </div>
+    <div>
+      <div class="bono-card">
+        <div class="section-title" style="font-size:1.4rem;margin-bottom:1.2rem;">ACCIONES RÁPIDAS</div>
+        <ul class="bono-actions-list">
+          <li class="bono-action-item"><span>🏊 Estado piscina hoy</span><span style="color:var(--success);font-size:0.82rem;font-weight:700;">● Abierta</span></li>
+          <li class="bono-action-item"><span>📅 Mis reservas pádel</span><button class="btn-sm" style="border-color:var(--border-mid);color:var(--text-mid);" onclick="scrollToSection('padel')">Ver</button></li>
+          <li class="bono-action-item"><span>💳 Renovar bono</span><button class="btn-primary orange" style="padding:0.3rem 0.8rem;font-size:0.8rem;" onclick="showToast('Redirigiendo a pasarela de pago...','info')">Pagar 30€</button></li>
+          <li class="bono-action-item"><span>📧 Recibos por email</span><button class="btn-sm" style="border-color:var(--teal);color:var(--teal);" onclick="showToast('Recibos enviados a tu email ✓','success')">Enviar</button></li>
+          <li class="bono-action-item"><span>❌ Cancelar membresía</span><button class="btn-sm btn-sm-danger" onclick="showToast('Llama al 900 000 000 o visítanos en recepción','info')">Solicitar</button></li>
+        </ul>
+      </div>
+      <div class="stripe-info">
+        <h3>💳 PASARELA DE PAGO — STRIPE</h3>
+        <div class="stripe-row"><span>Reserva pista socio (20€)</span><span style="color:var(--text-mid)">~0,55€ comisión → recibes 19,45€</span></div>
+        <div class="stripe-row"><span>Reserva pista visitante (24€)</span><span style="color:var(--text-mid)">~0,61€ comisión → recibes 23,39€</span></div>
+        <div class="stripe-row"><span>Natación trimestral (20€)</span><span style="color:var(--text-mid)">~0,55€ comisión → recibes 19,45€</span></div>
+        <div class="stripe-row"><span>Alta socio (30€/mes)</span><span style="color:var(--text-mid)">~0,70€ comisión → recibes 29,30€</span></div>
+        <div class="stripe-row"><span>Cuota mensual Stripe</span><span style="color:var(--success);font-weight:700;">0€ — Sin cuota fija</span></div>
+        <div class="stripe-row"><span>Tarifa por transacción (EEE)</span><span><strong>1,5% + 0,25€</strong></span></div>
+        <div class="stripe-note">ⓘ Comisiones deducidas automáticamente por Stripe. Sin permanencia ni costes ocultos.</div>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<footer>
+  <div class="footer-logo">AQUA<span>SPORT</span></div>
+  <div class="footer-tagline">Tu centro deportivo de confianza · Lunes a Domingo · 7h–23h</div>
+  <div class="footer-links"><a href="#">Aviso Legal</a><a href="#">Privacidad</a><a href="#">Contacto</a><a href="#">Instalaciones</a><a href="#">Tarifas</a><a href="#">Horarios</a></div>
+  <div class="footer-copy">© 2025 AquaSport Centro Deportivo. Todos los derechos reservados.</div>
+</footer>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-socio">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">HAZTE SOCIO</div><button class="modal-close" onclick="closeModal('modal-socio')">×</button></div>
+    <p style="color:var(--text-mid);font-size:0.9rem;margin-bottom:1.3rem;">Completa el formulario y empieza a disfrutar de tu bono desde hoy.</p>
+    <div class="form-group"><label class="form-label">Nombre completo</label><input type="text" class="form-input" placeholder="Tu nombre"></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" placeholder="tu@email.com"></div>
+    <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" placeholder="600 000 000"></div>
+    <div class="form-group"><label class="form-label">DNI</label><input type="text" class="form-input" placeholder="00000000A"></div>
+    <div class="booking-summary">
+      <div class="summary-row"><span>Primera mensualidad</span><span>30,00€</span></div>
+      <div class="summary-row"><span>Permanencia</span><span style="color:var(--success);font-weight:600;">Ninguna</span></div>
+      <div class="summary-row total"><span>TOTAL HOY</span><span>30,00€</span></div>
+    </div>
+    <button class="btn-primary orange" style="width:100%;margin-top:1rem;" onclick="procesarAlta()">Confirmar Alta · Pagar 30€ 💳</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-natacion">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="modal-nat-title">INSCRIPCIÓN NATACIÓN</div><button class="modal-close" onclick="closeModal('modal-natacion')">×</button></div>
+    <div id="modal-nat-info" class="info-box"></div>
+    <div class="form-group"><label class="form-label">Nombre del niño/a</label><input type="text" class="form-input" id="nat-nombre" placeholder="Nombre del alumno"></div>
+    <div class="form-group"><label class="form-label">Fecha de nacimiento</label><input type="date" class="form-input" id="nat-nacimiento"></div>
+    <div class="form-group"><label class="form-label">Email del responsable</label><input type="email" class="form-input" id="nat-email" placeholder="padre/madre@email.com"></div>
+    <div class="form-group"><label class="form-label">Teléfono</label><input type="tel" class="form-input" id="nat-tel" placeholder="600 000 000"></div>
+    <div class="booking-summary"><div class="summary-row"><span>Inscripción trimestral</span><span>20,00€</span></div><div class="summary-row total"><span>TOTAL</span><span>20,00€</span></div></div>
+    <button class="btn-primary orange" style="width:100%;margin-top:1rem;" onclick="confirmarNatacion()">Inscribir · Pagar 20€ 💳</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-cancel-padel">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">CANCELAR RESERVA</div><button class="modal-close" onclick="closeModal('modal-cancel-padel')">×</button></div>
+    <div class="cancel-detail-box" id="cancel-detail-box"></div>
+    <div id="cancel-refund-box"></div>
+    <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+      <button class="btn-secondary" style="flex:1;" onclick="closeModal('modal-cancel-padel')">Volver</button>
+      <button class="btn-primary" id="btn-confirm-cancel" style="flex:1;background:var(--danger);" onclick="ejecutarCancelacion()">Confirmar cancelación</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+let cancelTarget = null;
+const state = {
+  selectedCourt: 1, selectedSlot: null,
+  padelReservas: JSON.parse(localStorage.getItem('padelReservas')||'[]'),
+  clasesReservadas: JSON.parse(localStorage.getItem('clasesReservadas')||'[]'),
+  natReservas: JSON.parse(localStorage.getItem('natReservas')||'[]'),
+  currentNatCourse: null
+};
+function save() {
+  localStorage.setItem('padelReservas', JSON.stringify(state.padelReservas));
+  localStorage.setItem('clasesReservadas', JSON.stringify(state.clasesReservadas));
+  localStorage.setItem('natReservas', JSON.stringify(state.natReservas));
+}
+function scrollToSection(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth',block:'start'}); }
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+document.addEventListener('click', e => { if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open'); });
+function showToast(msg, type='info') {
+  const icons = {success:'✅',error:'❌',info:'ℹ️'};
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},4000);
+}
+function showTab(cid,tid,btn) {
+  document.getElementById(cid).querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  document.getElementById(tid).classList.add('active');
+  btn.closest('div').querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  if (tid==='mis-reservas') renderReservasPadel();
+}
+function getTodayStr() { return new Date().toISOString().split('T')[0]; }
+
+const HORARIOS=['09:00','10:30','12:00','13:30','16:00','17:30','19:00','20:30'];
+function getOccupied(date,court) {
+  const booked=state.padelReservas.filter(r=>r.fecha===date&&r.pista===court&&r.estado!=='cancelada').map(r=>r.hora);
+  const seed=(date+court).split('').reduce((a,c)=>a+c.charCodeAt(0),0);
+  const extra=[];
+  if(seed%3===0)extra.push(HORARIOS[1]);
+  if(seed%5===0)extra.push(HORARIOS[4]);
+  return [...new Set([...booked,...extra])];
+}
+function loadSlots() {
+  state.selectedSlot=null;
+  const fecha=document.getElementById('padel-fecha').value;
+  const grid=document.getElementById('slots-grid');
+  if(!fecha){grid.innerHTML='<span style="color:var(--text-light);font-size:0.82rem;grid-column:1/-1">Selecciona una fecha primero</span>';return;}
+  const occupied=getOccupied(fecha,state.selectedCourt);
+  grid.innerHTML=HORARIOS.map(h=>{
+    const occ=occupied.includes(h);
+    return `<div class="slot ${occ?'occupied':''}" onclick="${occ?'':` selectSlot(this,'${h}')`}"><div>${h}h</div><div style="font-size:0.65rem;opacity:0.6">${occ?'ocupado':'libre'}</div></div>`;
+  }).join('');
+  updatePadelSummary();
+}
+function selectSlot(el,hora) {
+  document.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');state.selectedSlot=hora;updatePadelSummary();
+}
+function selectCourt(btn,num) {
+  document.querySelectorAll('.court-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');state.selectedCourt=num;loadSlots();
+}
+function updatePadelSummary() {
+  const fecha=document.getElementById('padel-fecha').value;
+  const socio=document.getElementById('socio-select')?.value;
+  const precio=socio==='si'?'20,00€':'24,00€';
+  document.getElementById('sum-pista').textContent=`Pista ${state.selectedCourt}`;
+  document.getElementById('sum-fecha').textContent=(fecha&&state.selectedSlot)?`${fecha} · ${state.selectedSlot}h`:'—';
+  document.getElementById('sum-total').textContent=(fecha&&state.selectedSlot)?precio:'—';
+}
+function confirmarReservaPadel() {
+  const fecha=document.getElementById('padel-fecha').value;
+  const nombre=document.getElementById('padel-nombre').value.trim();
+  const email=document.getElementById('padel-email').value.trim();
+  if(!fecha)return showToast('Selecciona una fecha','error');
+  if(!state.selectedSlot)return showToast('Selecciona un horario disponible','error');
+  if(!nombre)return showToast('Introduce tu nombre','error');
+  if(!email)return showToast('Introduce tu email','error');
+  const socio=document.getElementById('socio-select').value;
+  const r={id:'PAD-'+Date.now(),pista:state.selectedCourt,fecha,hora:state.selectedSlot,nombre,email,precio:socio==='si'?20:24,socio:socio==='si',estado:'confirmada',creada:new Date().toISOString()};
+  state.padelReservas.push(r);save();
+  showToast(`Reserva confirmada — Pista ${r.pista} · ${fecha} ${r.hora}h`,'success');
+  document.getElementById('padel-nombre').value='';
+  document.getElementById('padel-email').value='';
+  document.getElementById('padel-tel').value='';
+  state.selectedSlot=null;loadSlots();
+}
+function abrirModalCancelacion(id) {
+  const r=state.padelReservas.find(x=>x.id===id);if(!r)return;
+  cancelTarget=r;
+  const dt=new Date(`${r.fecha}T${r.hora}:00`);
+  const diffH=(dt-new Date())/3600000;
+  const puedeReembolso=diffH>=2;
+  document.getElementById('cancel-detail-box').innerHTML=`
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.4rem;">
+      <span style="background:var(--bg2);padding:0.2rem 0.6rem;border-radius:6px;font-size:0.8rem;border:1px solid var(--border)">Pista ${r.pista}</span>
+      <span style="background:var(--bg2);padding:0.2rem 0.6rem;border-radius:6px;font-size:0.8rem;border:1px solid var(--border)">${r.fecha}</span>
+      <span style="background:var(--bg2);padding:0.2rem 0.6rem;border-radius:6px;font-size:0.8rem;border:1px solid var(--border)">${r.hora}h</span>
+    </div>
+    <strong>${r.nombre}</strong> · ${r.precio}€ ${r.socio?'(socio)':'(visitante)'}`;
+  const btn=document.getElementById('btn-confirm-cancel');
+  if(puedeReembolso){
+    document.getElementById('cancel-refund-box').innerHTML=`<div class="refund-box ok">✅ <div><strong>Reembolso completo</strong><br>Quedan más de 2 horas para el partido. Se devolverán <strong>${r.precio},00€</strong> en 3-5 días laborables.</div></div>`;
+    btn.textContent='Confirmar cancelación';
+  } else {
+    const hrs=Math.max(0,diffH).toFixed(1);
+    document.getElementById('cancel-refund-box').innerHTML=`<div class="refund-box no">❌ <div><strong>Sin reembolso</strong><br>Quedan solo ${hrs}h para el partido. Según la política, no se realiza devolución con menos de 2 horas de antelación.</div></div>`;
+    btn.textContent='Cancelar sin reembolso';
+  }
+  openModal('modal-cancel-padel');
+}
+function ejecutarCancelacion() {
+  if(!cancelTarget)return;
+  const r=state.padelReservas.find(x=>x.id===cancelTarget.id);if(!r)return;
+  const diffH=(new Date(`${r.fecha}T${r.hora}:00`)-new Date())/3600000;
+  r.estado='cancelada';save();closeModal('modal-cancel-padel');renderReservasPadel();
+  if(diffH>=2)showToast(`Reserva cancelada. Reembolso de ${r.precio}€ procesado.`,'success');
+  else showToast('Reserva cancelada. Sin reembolso (menos de 2h).','info');
+  cancelTarget=null;
+}
+function renderReservasPadel() {
+  const cont=document.getElementById('reservas-padel-container');
+  if(!state.padelReservas.length){cont.innerHTML='<p style="color:var(--text-light);padding:2rem 0;font-size:0.9rem;">No tienes reservas de pádel todavía.</p>';return;}
+  const sorted=[...state.padelReservas].sort((a,b)=>new Date(b.creada)-new Date(a.creada));
+  cont.innerHTML=`<table class="reservas-table"><thead><tr><th>ID</th><th>Pista</th><th>Fecha</th><th>Hora</th><th>Precio</th><th>Estado</th><th>Reembolso</th><th>Acción</th></tr></thead><tbody>${sorted.map(r=>{
+    const diffH=(new Date(`${r.fecha}T${r.hora}:00`)-new Date())/3600000;
+    const puedeR=r.estado==='confirmada'&&diffH>=2;
+    return `<tr>
+      <td style="font-size:0.74rem;color:var(--text-light)">${r.id}</td>
+      <td><strong>Pista ${r.pista}</strong></td><td>${r.fecha}</td><td>${r.hora}h</td>
+      <td><strong>${r.precio}€</strong></td>
+      <td><span class="badge ${r.estado==='confirmada'?'badge-ok':'badge-cancelled'}">${r.estado}</span></td>
+      <td>${r.estado==='confirmada'?(puedeR?'<span style="color:var(--success);font-size:0.78rem;font-weight:700;">✓ Sí</span>':'<span style="color:var(--danger);font-size:0.78rem;font-weight:700;">✗ No</span>'):'—'}</td>
+      <td>${r.estado==='confirmada'?`<button class="btn-sm btn-sm-danger" onclick="abrirModalCancelacion('${r.id}')">Cancelar</button>`:'—'}</td>
+    </tr>`;
+  }).join('')}</tbody></table>`;
+}
+
+const NAT=[
+  {id:'nat1',edad:'2-3 años',dias:'Lunes y Miércoles',hora:'10:00-10:30',max:6,inscritos:3},
+  {id:'nat2',edad:'2-3 años',dias:'Martes y Jueves',hora:'10:00-10:30',max:6,inscritos:5},
+  {id:'nat3',edad:'4-5 años',dias:'Lunes y Miércoles',hora:'10:30-11:15',max:6,inscritos:4},
+  {id:'nat4',edad:'4-5 años',dias:'Martes y Jueves',hora:'10:30-11:15',max:6,inscritos:6},
+  {id:'nat5',edad:'6-7 años',dias:'Lunes y Miércoles',hora:'11:15-12:00',max:6,inscritos:2},
+  {id:'nat6',edad:'6-7 años',dias:'Martes y Jueves',hora:'11:15-12:00',max:6,inscritos:5},
+  {id:'nat7',edad:'8-9 años',dias:'Lunes y Miércoles',hora:'12:00-12:45',max:6,inscritos:3},
+  {id:'nat8',edad:'8-9 años',dias:'Sábados',hora:'10:00-10:45',max:6,inscritos:6},
+];
+function renderNatacion() {
+  document.getElementById('natacion-grid').innerHTML=NAT.map(c=>{
+    const libres=c.max-c.inscritos;const pct=(c.inscritos/c.max)*100;
+    const col=pct>=100?'var(--danger)':pct>=66?'var(--warning)':'var(--teal)';
+    return `<div class="natacion-card">
+      <div class="age-badge">👧 ${c.edad}</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:0.8px;color:var(--navy)">${c.dias}</div>
+      <div style="color:var(--teal);font-size:0.83rem;font-weight:600;margin:0.2rem 0">⏰ ${c.hora}</div>
+      <div style="font-size:0.8rem;color:${libres===0?'var(--danger)':libres<=2?'var(--warning)':'var(--success)'};font-weight:600;margin-top:0.4rem">${libres===0?'COMPLETO':`${libres} plaza${libres>1?'s':''} libre${libres>1?'s':''}`}</div>
+      <div class="spots-bar"><div class="spots-fill" style="width:${pct}%;background:${col}"></div></div>
+      <div style="font-size:0.74rem;color:var(--text-light);margin-top:0.3rem">${c.inscritos}/${c.max} plazas</div>
+      <button class="btn-primary ${libres>0?'orange':''}" style="width:100%;margin-top:1rem;font-size:0.85rem;${libres===0?'opacity:0.4;cursor:not-allowed;background:#aaa;':''}" ${libres===0?'disabled':''} onclick="abrirNatacion('${c.id}')">
+        ${libres===0?'Sin plazas':'Inscribir · 20€'}</button>
+    </div>`;
+  }).join('');
+}
+function abrirNatacion(id) {
+  const c=NAT.find(x=>x.id===id);if(!c)return;
+  state.currentNatCourse=c;
+  document.getElementById('modal-nat-title').textContent=`NATACIÓN ${c.edad.toUpperCase()}`;
+  document.getElementById('modal-nat-info').innerHTML=`<h4>📋 Detalles del curso</h4><strong>${c.edad}</strong> · ${c.dias}<br>Horario: <strong>${c.hora}</strong><br>Plazas libres: <strong>${c.max-c.inscritos}</strong> de ${c.max} · <strong style="color:var(--orange)">20€/trimestre</strong>`;
+  openModal('modal-natacion');
+}
+function confirmarNatacion() {
+  const nombre=document.getElementById('nat-nombre').value.trim();
+  const email=document.getElementById('nat-email').value.trim();
+  if(!nombre||!email)return showToast('Completa todos los campos','error');
+  const c=state.currentNatCourse;if(!c)return;
+  c.inscritos++;
+  state.natReservas.push({cursoId:c.id,nombre,email,estado:'activa',fecha:new Date().toISOString()});
+  save();closeModal('modal-natacion');renderNatacion();
+  showToast(`Inscripción confirmada — ${nombre} · ${c.edad}`,'success');
+}
+
+const CZ=[
+  {id:'z1',nombre:'Zumba',dia:'Lunes',hora:'10:00',instructor:'María G.',max:20,inscritos:14},
+  {id:'z2',nombre:'Zumba',dia:'Miércoles',hora:'10:00',instructor:'María G.',max:20,inscritos:18},
+  {id:'z3',nombre:'Zumba',dia:'Viernes',hora:'11:00',instructor:'Ana R.',max:20,inscritos:8},
+  {id:'z4',nombre:'Zumba',dia:'Sábado',hora:'10:30',instructor:'Ana R.',max:20,inscritos:20},
+  {id:'z5',nombre:'Zumba Suave',dia:'Martes',hora:'17:00',instructor:'María G.',max:16,inscritos:10},
+  {id:'z6',nombre:'Zumba Suave',dia:'Jueves',hora:'17:00',instructor:'Ana R.',max:16,inscritos:15},
+];
+const CS=[
+  {id:'s1',nombre:'Spinning',dia:'Lunes',hora:'07:30',instructor:'Carlos M.',max:15,inscritos:12},
+  {id:'s2',nombre:'Spinning',dia:'Martes',hora:'19:30',instructor:'Jorge L.',max:15,inscritos:15},
+  {id:'s3',nombre:'Spinning',dia:'Miércoles',hora:'07:30',instructor:'Carlos M.',max:15,inscritos:9},
+  {id:'s4',nombre:'Spinning Intenso',dia:'Jueves',hora:'19:30',instructor:'Jorge L.',max:12,inscritos:7},
+  {id:'s5',nombre:'Spinning',dia:'Viernes',hora:'07:30',instructor:'Carlos M.',max:15,inscritos:11},
+  {id:'s6',nombre:'Spinning Power',dia:'Sábado',hora:'09:00',instructor:'Jorge L.',max:12,inscritos:12},
+];
+function renderClases(clases,cid) {
+  document.getElementById(cid).innerHTML=clases.map(c=>{
+    const libres=c.max-c.inscritos;const llena=libres<=0;
+    const reservada=state.clasesReservadas.includes(c.id);
+    const pct=(c.inscritos/c.max)*100;
+    return `<div class="class-card">
+      <div class="class-info">
+        <div class="class-name">${c.nombre}</div>
+        <div class="class-time">⏰ ${c.hora}h · 👤 ${c.instructor}</div>
+        <div class="class-day">📅 ${c.dia}</div>
+        <div class="class-spots">${llena?'Completa':libres+' plaza'+(libres!==1?'s':'')+' libre'+(libres!==1?'s':'')}</div>
+        <div class="spots-bar"><div class="spots-fill" style="width:${pct}%;background:${pct>=100?'var(--danger)':pct>=70?'var(--warning)':'var(--teal)'}"></div></div>
+      </div>
+      ${reservada?`<button class="btn-class btn-class-cancel" onclick="cancelarClase('${c.id}',event)">Cancelar</button>`:
+        llena?`<button class="btn-class btn-class-full" disabled>Completa</button>`:
+        `<button class="btn-class btn-class-reserve" onclick="reservarClase('${c.id}',event)">Reservar</button>`}
+    </div>`;
+  }).join('');
+}
+function reservarClase(id,e) {
+  e.stopPropagation();
+  const c=[...CZ,...CS].find(x=>x.id===id);if(!c)return;
+  c.inscritos++;state.clasesReservadas.push(id);save();rerenderClases();
+  showToast(`Plaza reservada — ${c.nombre} · ${c.dia} ${c.hora}h`,'success');
+}
+function cancelarClase(id,e) {
+  e.stopPropagation();
+  const c=[...CZ,...CS].find(x=>x.id===id);if(!c)return;
+  c.inscritos=Math.max(0,c.inscritos-1);
+  state.clasesReservadas=state.clasesReservadas.filter(x=>x!==id);
+  save();rerenderClases();showToast(`Reserva cancelada — ${c.nombre} · ${c.dia}`,'info');
+}
+function rerenderClases(){renderClases(CZ,'zumba-grid');renderClases(CS,'spinning-grid');}
+
+function consultarBono() {
+  const email=document.getElementById('bono-email').value.trim();
+  if(!email)return showToast('Introduce tu email','error');
+  const misP=state.padelReservas.filter(r=>r.email===email&&r.estado==='confirmada');
+  const misC=state.clasesReservadas.length;
+  document.getElementById('bono-info').innerHTML=`<div style="margin-top:1.2rem;">
+    <div class="bono-status"><div class="bono-dot"></div><div><div style="font-weight:700;font-size:0.95rem;color:var(--navy);">Bono Activo</div><div style="color:var(--text-light);font-size:0.8rem;">${email}</div></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem;">
+      <div style="background:var(--teal-pale);border:1px solid rgba(10,138,122,0.2);border-radius:10px;padding:1rem;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--teal);">${misP.length}</div><div style="font-size:0.75rem;color:var(--text-light);">Reservas pádel</div></div>
+      <div style="background:var(--orange-pale);border:1px solid rgba(232,93,38,0.2);border-radius:10px;padding:1rem;text-align:center;"><div style="font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--orange);">${misC}</div><div style="font-size:0.75rem;color:var(--text-light);">Clases reservadas</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem;"><div style="font-size:0.74rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-light);margin-bottom:0.3rem;">Próximo pago</div><div style="font-size:0.95rem;font-weight:600;color:var(--navy);">30,00€ · 1 abril 2025</div></div>
+  </div>`;
+}
+function procesarAlta() { showToast('¡Bienvenido/a! Alta en proceso. Recibirás un email de confirmación.','success'); closeModal('modal-socio'); }
+
+function init() {
+  const fi=document.getElementById('padel-fecha');
+  if(fi){fi.min=getTodayStr();fi.value=getTodayStr();loadSlots();}
+  renderNatacion();rerenderClases();
+}
+init();
+</script>
+</body>
+</html>
