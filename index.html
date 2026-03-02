@@ -458,13 +458,6 @@
   </div>
 </div>
 
-<div id="debug-wrap" style="display:none;position:fixed;bottom:1rem;left:1rem;z-index:2500;max-width:420px;background:white;border:1.5px solid var(--border);border-radius:12px;padding:1rem;box-shadow:var(--shadow-lg);max-height:240px;overflow:hidden;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-    <span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy);">🔍 Diagnóstico Supabase</span>
-    <button onclick="document.getElementById('debug-wrap').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:1rem;color:var(--text-light);">×</button>
-  </div>
-  <div id="debug-panel" style="overflow-y:auto;max-height:160px;"></div>
-</div>
 <div class="toast-container" id="toast-container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -494,11 +487,13 @@ const state = {
 // ── SUPABASE HELPERS ──
 async function db_insertarReservaPadel(r) {
   if (!SUPABASE_LISTO) { state.padelReservas.push(r); return r; }
-  const payload = {pista: r.pista, fecha: r.fecha, hora: r.hora + ':00',
-    nombre: r.nombre, email: r.email, es_socio: r.socio, precio: r.precio, estado: 'confirmada'};
-  const {data, error} = await sb.from('reservas_padel').insert([payload]).select().single();
-  if (error) { logDB('ERROR insert reservas_padel', error); showToast('Error: ' + error.message,'error'); return null; }
-  logDB('OK insert reservas_padel', data); return data;
+  const {data, error} = await sb.from('reservas_padel').insert([{
+    pista: r.pista, fecha: r.fecha, hora: r.hora + ':00',
+    nombre: r.nombre, email: r.email,
+    es_socio: r.socio, precio: r.precio, estado: 'confirmada'
+  }]).select().single();
+  if (error) { console.error(error); showToast('Error al guardar la reserva','error'); return null; }
+  return data;
 }
 
 async function db_obtenerReservasPadel(email) {
@@ -532,33 +527,22 @@ async function db_cancelarReservaPadel(id) {
 async function db_insertarNatacion(datos) {
   if (!SUPABASE_LISTO) { state.natReservas.push(datos); return datos; }
   const {data, error} = await sb.from('inscripciones_natacion').insert([{
-    curso_id: datos.cursoId, nombre_nino: datos.nombre,
-    email_responsable: datos.email, precio: 20, estado: 'activa'
+    curso_id: datos.cursoId,
+    nombre_nino: datos.nombre,
+    email_responsable: datos.email,
+    precio: 20, estado: 'activa'
   }]).select().single();
-  if (error) { logDB('ERROR insert natacion', error); showToast('Error: ' + error.message,'error'); return null; }
-  logDB('OK insert natacion', data); return data;
+  if (error) { console.error(error); showToast('Error al inscribir','error'); return null; }
+  return data;
 }
 
 async function db_insertarSocio(datos) {
   if (!SUPABASE_LISTO) return true;
-  const {data, error} = await sb.from('socios').insert([datos]).select();
-  if (error) {
-    if (error.code === '23505') { showToast('Email ya registrado','info'); return true; }
-    logDB('ERROR insert socios', error);
-    showToast('Error: ' + error.message,'error'); return false;
+  const {error} = await sb.from('socios').insert([datos]);
+  if (error && error.code !== '23505') { // ignora duplicado de email
+    console.error(error); showToast('Error al guardar el alta','error'); return false;
   }
-  logDB('OK insert socios', data); return true;
-}
-
-function logDB(label, data) {
-  console.log('[Supabase]', label, data);
-  const panel = document.getElementById('debug-panel');
-  if (!panel) return;
-  const entry = document.createElement('div');
-  entry.style.cssText = 'padding:0.4rem 0;border-bottom:1px solid var(--border);font-size:0.78rem;font-family:monospace;word-break:break-all;color:' + (label.includes('ERROR')?'var(--danger)':'var(--success)') + ';';
-  entry.textContent = new Date().toLocaleTimeString() + ' · ' + label + ': ' + JSON.stringify(data).slice(0,300);
-  panel.prepend(entry);
-  document.getElementById('debug-wrap').style.display='block';
+  return true;
 }
 
 function save() {
